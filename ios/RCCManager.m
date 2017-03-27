@@ -223,6 +223,9 @@
     UIViewController *splashVC = [[UIViewController alloc] init];
     splashVC.view = splashView;
     
+    // MASSIVE HACK TO AVOID STARTUP WHITE FLASH
+    [splashView setTag:123999321];
+
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     appDelegate.window.rootViewController = splashVC;
     [appDelegate.window makeKeyAndVisible];

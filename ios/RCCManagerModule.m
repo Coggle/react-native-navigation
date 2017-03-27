@@ -246,7 +246,14 @@ RCT_EXPORT_METHOD(
     // if we're animating - add a snapshot now
     UIViewController *presentedViewController = nil;
     UIView *snapshot = nil;
-    if (animated)
+    if(appDelegate.window.rootViewController.presentedViewController != nil)
+        presentedViewController = appDelegate.window.rootViewController.presentedViewController;
+    else
+        presentedViewController = appDelegate.window.rootViewController;
+
+    bool wasSplash = presentedViewController.view.tag  == 123999321;
+
+    if (wasSplash || animated)
     {
         if(appDelegate.window.rootViewController.presentedViewController != nil)
             presentedViewController = appDelegate.window.rootViewController.presentedViewController;
@@ -265,11 +272,17 @@ RCT_EXPORT_METHOD(
          [appDelegate.window makeKeyAndVisible];
          [presentedViewController dismissViewControllerAnimated:NO completion:nil];
          
-         if (animated)
+         if (wasSplash || animated)
          {
              // move the snaphot to the new root and animate it
              [appDelegate.window.rootViewController.view addSubview:snapshot];
-             [self animateSnapshot:snapshot animationType:animationType resolver:nil];
+             if (animated) {
+                 [self animateSnapshot:snapshot animationType:animationType resolver:nil];
+             } else {
+                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                     [snapshot removeFromSuperview];
+                 });
+             }
          }
      } rejecter:nil];
 }

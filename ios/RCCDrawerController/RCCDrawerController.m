@@ -46,7 +46,7 @@ UIViewController *rightViewController = nil;
     [self setAnimationTypeWithName:props[@"animationType"]];
     
     // default is all MMOpenDrawerGestureModeAll and MMCloseDrawerGestureModeAll
-    self.openDrawerGestureModeMask = MMOpenDrawerGestureModeAll;
+    self.openDrawerGestureModeMask = MMOpenDrawerGestureModeBezelPanningCenterView|MMOpenDrawerGestureModePanningNavigationBar;
     self.closeDrawerGestureModeMask = MMCloseDrawerGestureModeAll;
     
     NSNumber *disableOpenGesture = props[@"disableOpenGesture"];
@@ -56,7 +56,11 @@ UIViewController *rightViewController = nil;
     
     [self setStyle];
     
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:NO];
     [self setDrawerVisualStateBlock:^(MMDrawerController *drawerController, MMDrawerSide drawerSide, CGFloat percentVisible) {
+        if (percentVisible>0.8)
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+        else [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         MMDrawerControllerDrawerVisualStateBlock block;
         block = [[MMExampleDrawerVisualStateManager sharedManager] drawerVisualStateBlockForDrawerSide:drawerSide];
         if (block) {
